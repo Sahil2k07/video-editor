@@ -1,10 +1,10 @@
 # Frontend TODO
 
-- [ ] Initialize Vite project
-- [ ] Install required dependencies
+- [X] ~~Initialize Vite project~~
+- [X] ~~Install required dependencies~~
 
-- [ ] Create Upload page
-- [ ] Navigate to /edit route after upload
+- [X] ~~Create Upload page~~
+- [X] ~~Navigate to /edit route after upload~~
 
 - [ ] Show video player in center
 
