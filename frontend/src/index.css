@@ -10,3 +10,12 @@
     --color-dark-2: #262626;
     --color-dark-3: #171717;
 }
+
+.scrollable::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollable {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

@@ -2,7 +2,7 @@ import { styled } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useNavigate } from 'react-router-dom';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import Notification, { type NotificationState } from '../common/Notification';
 import { VideoContext } from '../../context/VideoBlobContext';
 
@@ -23,10 +23,12 @@ export default function FileUpload() {
 
     const context = useContext(VideoContext)
 
-    if (!context) {
-        navigate("/")
-        return;
-    }
+    useEffect(() => {
+        if (!context) {
+            navigate("/")
+            return;
+        }
+    }, [])
 
     const [notification, setNotification] = useState<NotificationState | null>(null)
 
@@ -34,7 +36,6 @@ export default function FileUpload() {
 
     const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         try {
-            const { setCurrentVideo } = context;
             const file = event.target.files?.[0];
             if (!file) return;
 
@@ -46,7 +47,7 @@ export default function FileUpload() {
                 blob: file,
             }
 
-            setCurrentVideo(currentVideo);
+            context?.setCurrentVideo(currentVideo);
             navigate(`/editor/${currentVideo.url}`);
         } catch (error) {
             console.error(error);
