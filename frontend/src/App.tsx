@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./pages/Home";
 import Editor from "./pages/Editor";
+import VideoProvider from "./context/VideoBlobContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -21,7 +22,9 @@ function App() {
   return (
     <main>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <VideoProvider>
+          <RouterProvider router={router} />
+        </VideoProvider>
       </QueryClientProvider>
     </main>
   )

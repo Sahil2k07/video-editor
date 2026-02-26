@@ -6,7 +6,7 @@
 - [X] ~~Create Upload page~~
 - [X] ~~Navigate to /edit route after upload~~
 
-- [ ] Show video player in center
+- [X] ~~Show video player in center~~
 
 - [ ] Create frame-based timeline slider
 - [ ] Display video duration on timeline
