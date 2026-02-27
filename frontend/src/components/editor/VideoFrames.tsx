@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
-import Slider from "./Slider";
+import { useEffect, useState, useRef, useCallback } from "react";
+import Slider, { type SelectionRange } from "./Slider";
 
 type Props = {
     video: React.RefObject<HTMLVideoElement | null>;
+    onSelectionChange?: (selected: SelectedSegments) => void;
 };
 
 type TimeStep = {
@@ -10,20 +11,35 @@ type TimeStep = {
     image: string;
 };
 
-function VideoFrames({ video }: Props) {
-    const [timeSteps, setTimeSteps] = useState<TimeStep[]>([]);
+// Payload sent to parent / backend
+// Each entry = a selected segment (start–end in seconds)
+// Selected = the parts from start→leftHandle and rightHandle→end
+export type SelectedSegments = {
+    segments: { from: number; to: number }[];
+    duration: number;
+};
 
+function VideoFrames({ video, onSelectionChange }: Props) {
+    const [timeSteps, setTimeSteps] = useState<TimeStep[]>([]);
+    const [duration, setDuration] = useState(0);
+    const [selection, setSelection] = useState<SelectionRange>({ leftRatio: 0, rightRatio: 0 });
+
+    const totalScrollWidth = useRef(0);
+    const scrollRef = useRef<HTMLElement>(null);
+
+    // Capture frames on video load
     useEffect(() => {
         const vid = video.current;
         if (!vid) return;
 
         const handleLoadedMetadata = async () => {
-            const frameInterval = 0.5; // slider steps
-            const captureInterval = 3; // capture every 3s
-            const duration = vid.duration;
+            const frameInterval = 0.5;
+            const captureInterval = 3;
+            const dur = vid.duration;
+            setDuration(dur);
 
             const times = Array.from(
-                { length: Math.floor(duration / frameInterval) + 1 },
+                { length: Math.floor(dur / frameInterval) + 1 },
                 (_, i) => Math.round(i * frameInterval * 10) / 10
             );
 
@@ -39,22 +55,17 @@ function VideoFrames({ video }: Props) {
                             canvas.height = vid.videoHeight;
                             const ctx = canvas.getContext("2d");
                             if (ctx) ctx.drawImage(vid, 0, 0, canvas.width, canvas.height);
-
                             lastImage = canvas.toDataURL();
-
                             vid.removeEventListener("seeked", handleSeeked);
                             resolve();
                         };
-
                         vid.addEventListener("seeked", handleSeeked);
                         vid.currentTime = t;
                     });
                 }
-
                 frames.push({ time: t, image: lastImage });
             }
 
-            // batch update state once
             setTimeSteps(frames);
         };
 
@@ -62,9 +73,47 @@ function VideoFrames({ video }: Props) {
         return () => vid.removeEventListener("loadedmetadata", handleLoadedMetadata);
     }, [video]);
 
+    // Track scroll container's total scroll width (for ratio → time mapping)
+    useEffect(() => {
+        if (!scrollRef.current) return;
+        const observer = new ResizeObserver(() => {
+            totalScrollWidth.current = scrollRef.current?.scrollWidth ?? 0;
+        });
+        observer.observe(scrollRef.current);
+        return () => observer.disconnect();
+    }, [timeSteps]);
+
+    // Convert slider ratios → time segments and bubble up
+    const handleSelectionChange = useCallback(
+        (sel: SelectionRange) => {
+            setSelection(sel);
+
+            if (!onSelectionChange || !duration) return;
+
+            const segments: { from: number; to: number }[] = [];
+
+            const leftTime = parseFloat((sel.leftRatio * duration).toFixed(2));
+            const rightTime = parseFloat(((1 - sel.rightRatio) * duration).toFixed(2));
+
+            // Left selected region: start → leftHandle
+            if (leftTime > 0) {
+                segments.push({ from: 0, to: leftTime });
+            }
+
+            // Right selected region: rightHandle → end
+            if (rightTime < duration) {
+                segments.push({ from: rightTime, to: duration });
+            }
+
+            onSelectionChange({ segments, duration });
+        },
+        [duration, onSelectionChange]
+    );
+
     return (
-        <Slider>
+        <Slider onSelectionChange={handleSelectionChange}>
             <section
+                ref={scrollRef}
                 className="overflow-x-scroll scrollable"
                 onWheel={(e) => {
                     e.preventDefault();
@@ -73,7 +122,10 @@ function VideoFrames({ video }: Props) {
             >
                 <div className="flex w-max">
                     {timeSteps.map((step) => (
-                        <div key={step.time} className="flex flex-col items-center w-24 shrink-0 cursor-pointer">
+                        <div
+                            key={step.time}
+                            className="flex flex-col items-center w-24 shrink-0 cursor-pointer"
+                        >
                             <p className="text-sm bg-black w-full text-center">{step.time}s</p>
                             <img
                                 src={step.image}
@@ -85,7 +137,6 @@ function VideoFrames({ video }: Props) {
                 </div>
             </section>
         </Slider>
-
     );
 }
 
