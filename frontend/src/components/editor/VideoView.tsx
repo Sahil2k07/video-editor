@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { VideoContext } from "../../context/VideoBlobContext";
-import VideoSlider from "./VideoSlider";
+import VideoFrames from "./VideoFrames";
 
 function VideoView() {
     const [videoURL, setVideoURL] = useState("")
@@ -47,7 +47,7 @@ function VideoView() {
             ></video>
 
             <div className="bg-dark-3 w-full p-6">
-                <VideoSlider video={hiddenVideoRef} />
+                <VideoFrames video={hiddenVideoRef} />
             </div>
         </main>
     )

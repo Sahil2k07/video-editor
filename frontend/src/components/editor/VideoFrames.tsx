@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Slider from "./Slider";
 
 type Props = {
     video: React.RefObject<HTMLVideoElement | null>;
@@ -9,7 +10,7 @@ type TimeStep = {
     image: string;
 };
 
-function VideoSlider({ video }: Props) {
+function VideoFrames({ video }: Props) {
     const [timeSteps, setTimeSteps] = useState<TimeStep[]>([]);
 
     useEffect(() => {
@@ -62,10 +63,8 @@ function VideoSlider({ video }: Props) {
     }, [video]);
 
     return (
-        <section className="flex max-w-2xl mx-auto">
-            <div className="bg-red-400 p-px relative flex items-center">
-                <span className="cursor-pointer rounded-full w-1.5 h-2.5 bg-red-400 p-1.5 absolute -left-1.5"></span>
-            </div>
+        <section className="flex max-w-2xl mx-auto relative">
+            <Slider side="left" />
             <section
                 className="overflow-x-scroll scrollable"
                 onWheel={(e) => {
@@ -74,7 +73,6 @@ function VideoSlider({ video }: Props) {
                 }}
             >
                 <div className="flex w-max">
-
                     {timeSteps.map((step) => (
                         <div key={step.time} className="flex flex-col items-center w-24 shrink-0 cursor-pointer">
                             <p className="text-sm bg-black w-full text-center">{step.time}s</p>
@@ -86,14 +84,11 @@ function VideoSlider({ video }: Props) {
                         </div>
                     ))}
                 </div>
-
             </section>
-            <div className="bg-red-400 p-px relative flex items-center">
-                <span className="cursor-pointer rounded-full w-1.5 h-2.5 bg-red-400 p-1.5 absolute -left-1.5"></span>
-            </div>
+            <Slider side="right" />
         </section>
 
     );
 }
 
-export default VideoSlider;
+export default VideoFrames;

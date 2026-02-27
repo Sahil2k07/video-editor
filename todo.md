@@ -8,7 +8,7 @@
 
 - [X] ~~Show video player in center~~
 
-- [ ] Create frame-based timeline slider
+- [X] ~~Create frame-based timeline slider~~
 - [ ] Display video duration on timeline
 - [ ] Add left & right trim handles
 
