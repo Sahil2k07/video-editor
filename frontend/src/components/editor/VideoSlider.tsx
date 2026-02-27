@@ -62,26 +62,37 @@ function VideoSlider({ video }: Props) {
     }, [video]);
 
     return (
-        <section
-            className="overflow-x-scroll scrollable max-w-2xl cursor-pointer mx-auto"
-            onWheel={(e) => {
-                e.preventDefault();
-                e.currentTarget.scrollLeft += e.deltaY;
-            }}
-        >
-            <div className="flex w-max">
-                {timeSteps.map((step) => (
-                    <div key={step.time} className="flex flex-col items-center w-24 shrink-0">
-                        <p className="text-sm bg-black w-full text-center">{step.time}s</p>
-                        <img
-                            src={step.image}
-                            alt={`Frame at ${step.time}s`}
-                            className="w-full h-auto border border-gray-800"
-                        />
-                    </div>
-                ))}
+        <section className="flex max-w-2xl mx-auto">
+            <div className="bg-red-400 p-px relative flex items-center">
+                <span className="cursor-pointer rounded-full w-1.5 h-2.5 bg-red-400 p-1.5 absolute -left-1.5"></span>
+            </div>
+            <section
+                className="overflow-x-scroll scrollable"
+                onWheel={(e) => {
+                    e.preventDefault();
+                    e.currentTarget.scrollLeft += e.deltaY;
+                }}
+            >
+                <div className="flex w-max">
+
+                    {timeSteps.map((step) => (
+                        <div key={step.time} className="flex flex-col items-center w-24 shrink-0 cursor-pointer">
+                            <p className="text-sm bg-black w-full text-center">{step.time}s</p>
+                            <img
+                                src={step.image}
+                                alt={`Frame at ${step.time}s`}
+                                className="w-full h-auto border border-gray-800"
+                            />
+                        </div>
+                    ))}
+                </div>
+
+            </section>
+            <div className="bg-red-400 p-px relative flex items-center">
+                <span className="cursor-pointer rounded-full w-1.5 h-2.5 bg-red-400 p-1.5 absolute -left-1.5"></span>
             </div>
         </section>
+
     );
 }
 
