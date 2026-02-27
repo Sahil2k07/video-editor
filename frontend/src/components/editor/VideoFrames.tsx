@@ -63,8 +63,7 @@ function VideoFrames({ video }: Props) {
     }, [video]);
 
     return (
-        <section className="flex max-w-2xl mx-auto relative">
-            <Slider side="left" />
+        <Slider>
             <section
                 className="overflow-x-scroll scrollable"
                 onWheel={(e) => {
@@ -85,8 +84,7 @@ function VideoFrames({ video }: Props) {
                     ))}
                 </div>
             </section>
-            <Slider side="right" />
-        </section>
+        </Slider>
 
     );
 }
