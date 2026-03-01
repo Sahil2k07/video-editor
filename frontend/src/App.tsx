@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import Home from "./pages/Home";
 import Editor from "./pages/Editor";
 import VideoProvider from "./context/VideoBlobContext";
+import ToolContextProvider from "./context/ToolContext";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -23,7 +24,9 @@ function App() {
     <main>
       <QueryClientProvider client={queryClient}>
         <VideoProvider>
-          <RouterProvider router={router} />
+          <ToolContextProvider>
+            <RouterProvider router={router} />
+          </ToolContextProvider>
         </VideoProvider>
       </QueryClientProvider>
     </main>

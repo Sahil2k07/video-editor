@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import Slider, { type SelectionRange } from "./Slider";
+import ToolControls from "./ToolControl";
 
 type Props = {
     video: React.RefObject<HTMLVideoElement | null>;
@@ -111,32 +112,36 @@ function VideoFrames({ video, onSelectionChange }: Props) {
     );
 
     return (
-        <Slider onSelectionChange={handleSelectionChange}>
-            <section
-                ref={scrollRef}
-                className="overflow-x-scroll scrollable"
-                onWheel={(e) => {
-                    e.preventDefault();
-                    e.currentTarget.scrollLeft += e.deltaY;
-                }}
-            >
-                <div className="flex w-max">
-                    {timeSteps.map((step) => (
-                        <div
-                            key={step.time}
-                            className="flex flex-col items-center w-24 shrink-0 cursor-pointer"
-                        >
-                            <p className="text-sm bg-black w-full text-center">{step.time}s</p>
-                            <img
-                                src={step.image}
-                                alt={`Frame at ${step.time}s`}
-                                className="w-full h-auto border border-gray-800"
-                            />
-                        </div>
-                    ))}
-                </div>
-            </section>
-        </Slider>
+        <>
+            <ToolControls />
+
+            <Slider onSelectionChange={handleSelectionChange}>
+                <section
+                    ref={scrollRef}
+                    className="overflow-x-scroll scrollable"
+                    onWheel={(e) => {
+                        e.preventDefault();
+                        e.currentTarget.scrollLeft += e.deltaY;
+                    }}
+                >
+                    <div className="flex w-max">
+                        {timeSteps.map((step) => (
+                            <div
+                                key={step.time}
+                                className="flex flex-col items-center w-24 shrink-0 cursor-pointer"
+                            >
+                                <p className="text-sm bg-black w-full text-center">{step.time}s</p>
+                                <img
+                                    src={step.image}
+                                    alt={`Frame at ${step.time}s`}
+                                    className="w-full h-auto border border-gray-800"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </section>
+            </Slider>
+        </>
     );
 }
 

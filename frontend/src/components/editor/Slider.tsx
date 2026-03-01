@@ -91,7 +91,7 @@ function Slider({ children, onSelectionChange }: Props) {
     }, [containerWidth]);
 
     return (
-        <section ref={containerRef} className="flex max-w-2xl mx-auto relative">
+        <section ref={containerRef} className="flex max-w-4xl mx-auto relative">
             {/* Left selected overlay — from left edge to left handle */}
             {leftPos > 0 && (
                 <div
