@@ -34,7 +34,7 @@ function VideoView() {
     }, [context, navigate])
 
     return (
-        <main className="bg-dark-2 flex flex-col justify-center items-center">
+        <main className="bg-dark-2 flex flex-col justify-center items-center w-full">
             <video ref={videoRef} className="w-4xl p-6" controls src={videoURL}></video>
 
             {/* Hidden video for frame capture */}
