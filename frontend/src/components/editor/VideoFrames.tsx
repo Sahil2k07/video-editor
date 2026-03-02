@@ -1,6 +1,8 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useContext } from "react";
 import Slider, { type SelectionRange } from "./Slider";
 import ToolControls from "./ToolControl";
+import { ToolContext, type VideoPayload } from "../../context/ToolContext";
+import { Navigate } from "react-router-dom";
 
 type Props = {
     video: React.RefObject<HTMLVideoElement | null>;
@@ -21,9 +23,18 @@ export type SelectedSegments = {
 };
 
 function VideoFrames({ video, onSelectionChange }: Props) {
+    const context = useContext(ToolContext)
+
+    if (!context) {
+        return <Navigate to="/" />
+    }
+
+    const { setSteps, isMuted, isTrimActive } = context;
+
     const [timeSteps, setTimeSteps] = useState<TimeStep[]>([]);
     const [duration, setDuration] = useState(0);
-    const [selection, setSelection] = useState<SelectionRange>({ leftRatio: 0, rightRatio: 0 });
+    const [_, setSelection] = useState<SelectionRange>({ leftRatio: 0, rightRatio: 0 });
+    const [payload, setPayload] = useState<VideoPayload[]>([])
 
     const totalScrollWidth = useRef(0);
     const scrollRef = useRef<HTMLElement>(null);
@@ -89,21 +100,21 @@ function VideoFrames({ video, onSelectionChange }: Props) {
         (sel: SelectionRange) => {
             setSelection(sel);
 
-            if (!onSelectionChange || !duration) return;
+            const segments: VideoPayload[] = []
 
-            const segments: { from: number; to: number }[] = [];
+            if (!onSelectionChange || !duration) return;
 
             const leftTime = parseFloat((sel.leftRatio * duration).toFixed(2));
             const rightTime = parseFloat(((1 - sel.rightRatio) * duration).toFixed(2));
 
             // Left selected region: start → leftHandle
             if (leftTime > 0) {
-                segments.push({ from: 0, to: leftTime });
+                segments.push({ from: 0, to: leftTime, isMuted, isTrimmed: isTrimActive });
             }
 
             // Right selected region: rightHandle → end
             if (rightTime < duration) {
-                segments.push({ from: rightTime, to: duration });
+                segments.push({ from: rightTime, to: duration, isMuted, isTrimmed: isTrimActive });
             }
 
             onSelectionChange({ segments, duration });
@@ -113,7 +124,7 @@ function VideoFrames({ video, onSelectionChange }: Props) {
 
     return (
         <>
-            <ToolControls />
+            <ToolControls context={context} segments={payload} />
 
             <Slider onSelectionChange={handleSelectionChange}>
                 <section
@@ -121,7 +132,7 @@ function VideoFrames({ video, onSelectionChange }: Props) {
                     className="overflow-x-scroll scrollable"
                     onWheel={(e) => {
                         e.preventDefault();
-                        e.currentTarget.scrollLeft += e.deltaY;
+                        e.currentTarget.scrollLeft += e.deltaY
                     }}
                 >
                     <div className="flex w-max">

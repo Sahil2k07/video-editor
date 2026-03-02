@@ -12,7 +12,7 @@ function ToolBar() {
         return <Navigate to={"/"} />
     }
 
-    const { isTrimActive, setIsTrimActive, handleSave } = context;
+    const { isTrimActive, setIsTrimActive, handleSave, handleUndo } = context;
 
     return (
         <aside className="bg-dark-1 flex sm:flex-col justify-between sm:py-6 items-center text-gray-300 text-sm sm:border-r">
@@ -22,7 +22,7 @@ function ToolBar() {
                     <span className='hidden lg:block'>Trim</span>
                 </button>
 
-                <button className='cursor-pointer w-full px-4 sm:px-10 py-2 sm:py-4 hover:bg-gray-500'>
+                <button onClick={handleUndo} className='cursor-pointer w-full px-4 sm:px-10 py-2 sm:py-4 hover:bg-gray-500'>
                     <UndoIcon fontSize='large' />
                     <span className='hidden lg:block'>Undo</span>
                 </button>
